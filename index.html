@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cie ID — Prototipo Mobile Web</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Top Prototype Control Bar (Outside the phone frame for pair programming & testing) -->
+  <aside class="proto-toolbar" aria-label="Controlli prototipo">
+    <div class="proto-brand">
+      <span class="proto-tag">PROTOTIPO CIE ID</span>
+      <span class="proto-sub">Balsamiq Fidelity Wireframe</span>
+    </div>
+    <div class="proto-controls">
+      <div class="state-toggle-group">
+        <label for="state-selector" class="proto-label" data-i18n="proto_label_state">Stato Home:</label>
+        <select id="state-selector" class="proto-select" onchange="setAppState(this.value)">
+          <option value="unregistered" data-i18n="state_opt_unreg">Non registrata (Default)</option>
+          <option value="registered" data-i18n="state_opt_reg">Carta Registrata (Configurata)</option>
+        </select>
+      </div>
+      <div class="proto-actions">
+        <button type="button" class="proto-btn" onclick="toggleLanguage()" title="Cambia lingua">
+          <span id="proto-lang-label">Lingua: IT</span>
+        </button>
+        <button type="button" class="proto-btn" onclick="resetPrototype()" title="Ripristina prototipo">
+          ↺ <span data-i18n="btn_reset">Reset</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Presenter Quick-Jump Bar (Outside the phone frame for Live UX Exam Presentation) -->
+  <aside class="presenter-jump-panel" id="presenter-jump-panel" aria-label="Presenter Jump Menu">
+    <div class="presenter-header">
+      <div class="presenter-title-row">
+        <span class="presenter-badge" data-i18n="presenter_badge">EXAM DEMO</span>
+        <h2 class="presenter-title" data-i18n="presenter_title">Presenter Jump Menu</h2>
+      </div>
+      <div class="presenter-header-actions">
+        <button type="button" class="presenter-toggle-btn" id="presenter-toggle-btn" onclick="togglePresenterPanel()"
+          aria-expanded="true" title="Comprimi / Espandi">
+          <span id="presenter-toggle-label" data-i18n="presenter_collapse">Comprimi</span>
+          <svg class="toggle-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="presenter-body" id="presenter-body">
+      <!-- Flow A: Home & Navigation Exploration -->
+      <div class="flow-jump-card flow-a">
+        <div class="flow-card-top">
+          <span class="flow-pill flow-pill-a">FLOW A</span>
+          <strong class="flow-name" data-i18n="flow_a_title">Home & Navigazione</strong>
+        </div>
+        <p class="flow-desc" data-i18n="flow_a_desc">Esplorazione menu (⋮), accordion e centro assistenza</p>
+        <div class="flow-chips-wrap">
+          <button type="button" class="jump-chip jump-chip-primary" onclick="jumpToFlowA()">
+            ▶ <span data-i18n="btn_jump_flow_a">Avvia Flow A</span>
+          </button>
+          <button type="button" class="jump-chip" onclick="jumpToHomeUnreg()" data-i18n="chip_home_unreg">Home
+            (Default)</button>
+          <button type="button" class="jump-chip" onclick="toggleAccordion('card-semplificato')"
+            data-i18n="chip_accordion_semplice">Accordion 1</button>
+          <button type="button" class="jump-chip" onclick="toggleAccordion('card-completo')"
+            data-i18n="chip_accordion_completo">Accordion 2</button>
+          <button type="button" class="jump-chip" onclick="jumpToAssistenza()" data-i18n="chip_assistenza">Assistenza &
+            FAQ</button>
+          <button type="button" class="jump-chip" onclick="openContextualHelp('general')"
+            data-i18n="chip_help_drawer">Aiuto (?)</button>
+        </div>
+      </div>
+
+      <!-- Flow B: Forgotten PIN -> Deep-link to Gestione Carta -> PUK -> Nuovo PIN -> NFC -> Success -->
+      <div class="flow-jump-card flow-b">
+        <div class="flow-card-top">
+          <span class="flow-pill flow-pill-b">FLOW B</span>
+          <strong class="flow-name" data-i18n="flow_b_title">PIN Dimenticato & Recupero</strong>
+        </div>
+        <p class="flow-desc" data-i18n="flow_b_desc">PIN -> Link Gestione -> PUK -> Nuovo PIN -> NFC 4s -> Successo</p>
+        <div class="flow-chips-wrap">
+          <button type="button" class="jump-chip jump-chip-primary" onclick="jumpToFlowB()">
+            ▶ <span data-i18n="btn_jump_flow_b">Avvia Flow B</span>
+          </button>
+          <button type="button" class="jump-chip jump-chip-accent" onclick="autoPlayFlowB()">
+            ⚡ <span data-i18n="btn_autoplay_flow_b">Auto-Play Flow B</span>
+          </button>
+          <button type="button" class="jump-chip" onclick="jumpToPinRecoveryLink()" data-i18n="chip_link_gestione">1.
+            Link Gestione</button>
+          <button type="button" class="jump-chip" onclick="jumpToGestioneCarta()" data-i18n="chip_gestione_carta">2.
+            Gestione Carta</button>
+          <button type="button" class="jump-chip" onclick="jumpToPukStep(1)" data-i18n="chip_puk_step1">3. Step 1
+            (PUK)</button>
+          <button type="button" class="jump-chip" onclick="jumpToPukStep(2)" data-i18n="chip_puk_step2">4. Step 2 (Nuovo
+            PIN)</button>
+          <button type="button" class="jump-chip" onclick="jumpToPukStep(3)" data-i18n="chip_puk_step3">5. Step 3
+            (Ripeti PIN)</button>
+          <button type="button" class="jump-chip" onclick="jumpToPukStep(4)" data-i18n="chip_puk_step4">6. Step 4 (NFC &
+            Modal)</button>
+        </div>
+      </div>
+
+      <!-- Flow C: Direct Card Registration -->
+      <div class="flow-jump-card flow-c">
+        <div class="flow-card-top">
+          <span class="flow-pill flow-pill-c">FLOW C</span>
+          <strong class="flow-name" data-i18n="flow_c_title">Registrazione Carta Diretta</strong>
+        </div>
+        <p class="flow-desc" data-i18n="flow_c_desc">Inserisci PIN (Step 1) -> Lettura NFC 4s (Step 2) -> CIE Attiva</p>
+        <div class="flow-chips-wrap">
+          <button type="button" class="jump-chip jump-chip-primary" onclick="jumpToFlowC()">
+            ▶ <span data-i18n="btn_jump_flow_c">Avvia Flow C</span>
+          </button>
+          <button type="button" class="jump-chip jump-chip-accent" onclick="autoPlayFlowC()">
+            ⚡ <span data-i18n="btn_autoplay_flow_c">Auto-Play Flow C</span>
+          </button>
+          <button type="button" class="jump-chip" onclick="jumpToRegistrationStep(1)" data-i18n="chip_reg_step1">1. Step
+            1 di 2 (PIN)</button>
+          <button type="button" class="jump-chip" onclick="jumpToRegistrationStep(2)" data-i18n="chip_reg_step2">2. Step
+            2 di 2 (NFC)</button>
+          <button type="button" class="jump-chip" onclick="jumpToRegistrationSuccess()" data-i18n="chip_reg_success">3.
+            Successo Registrazione</button>
+          <button type="button" class="jump-chip" onclick="jumpToHomeReg()" data-i18n="chip_reg_home">4. Home con CIE
+            Attiva</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Centered Smartphone Frame (400px x 844px) -->
+  <main class="device-viewport">
+    <div class="smartphone-frame" id="smartphone">
+      <!-- Device Hardware Accents -->
+      <div class="device-speaker"></div>
+      <div class="device-camera-hole"></div>
+
+      <!-- Phone Screen Canvas -->
+      <div class="screen-canvas" id="screen-canvas">
+
+        <!-- 1. STATUS BAR -->
+        <header class="status-bar" id="status-bar">
+          <span class="status-time" id="status-time">09:52 AM</span>
+          <div class="status-icons">
+            <!-- Cellular signal icon -->
+            <svg class="status-icon" viewBox="0 0 20 20" fill="currentColor" width="15" height="15" aria-hidden="true">
+              <rect x="2" y="14" width="2.5" height="4" rx="0.5" />
+              <rect x="6" y="11" width="2.5" height="7" rx="0.5" />
+              <rect x="10" y="8" width="2.5" height="10" rx="0.5" />
+              <rect x="14" y="4" width="2.5" height="14" rx="0.5" />
+            </svg>
+            <!-- WiFi icon -->
+            <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+              <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="3" />
+            </svg>
+            <!-- Battery icon -->
+            <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20"
+              height="15" aria-hidden="true">
+              <rect x="2" y="6" width="17" height="12" rx="2.5" />
+              <rect x="4.5" y="8.5" width="11" height="7" fill="currentColor" rx="1" />
+              <path d="M21 10v4" stroke-linecap="round" stroke-width="2.5" />
+            </svg>
+          </div>
+        </header>
+
+        <!-- 2. MAIN APP BAR -->
+        <nav class="app-bar" id="app-bar">
+          <!-- Left: Three dots button -->
+          <div class="app-bar-left">
+            <button type="button" class="icon-btn" id="menu-dots-btn" aria-label="Menu opzioni" aria-expanded="false"
+              onclick="toggleDropdownMenu(event)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <circle cx="12" cy="5" r="2.2" />
+                <circle cx="12" cy="12" r="2.2" />
+                <circle cx="12" cy="19" r="2.2" />
+              </svg>
+            </button>
+
+            <!-- Three-dots Dropdown Menu Overlay -->
+            <div class="dropdown-menu" id="dropdown-menu" role="menu" aria-hidden="true">
+              <button type="button" class="dropdown-item" role="menuitem" onclick="openModal('privacy-modal')">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span data-i18n="menu_privacy">Privacy Policy</span>
+              </button>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" role="menuitem" onclick="openModal('credits-modal')">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <span data-i18n="menu_credits">Crediti</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Center: Bold title "Cie ID" -->
+          <div class="app-bar-center">
+            <h1 class="app-title" onclick="navigateTo('screen-home')">Cie ID</h1>
+          </div>
+
+          <!-- Right: Globe language toggle + Bell notification -->
+          <div class="app-bar-right">
+            <button type="button" class="icon-btn lang-btn" id="lang-toggle-btn" aria-label="Cambia lingua"
+              onclick="toggleLanguage()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                </path>
+              </svg>
+              <span class="lang-badge" id="lang-badge">IT</span>
+            </button>
+            <button type="button" class="icon-btn bell-btn" id="bell-btn" aria-label="Notifiche"
+              onclick="toggleNotifications()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="bell-dot" id="bell-dot"></span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- SCREEN CONTAINER (Viewport scroll for screen pages) -->
+        <div class="screen-scroll-container" id="screen-container">
+
+          <!-- ============================================== -->
+          <!-- SCREEN 1: HOME SCREEN                          -->
+          <!-- ============================================== -->
+          <section class="screen-view active" id="screen-home" aria-label="Home Cie ID">
+            <!-- Curved Greeting Header -->
+            <div class="curved-header">
+              <div class="greeting-content">
+                <h2 class="greeting-title" data-i18n="greeting_title">Ciao!</h2>
+                <p class="greeting-subtitle" data-i18n="greeting_subtitle">Scegli come accedere con la tua CIE</p>
+              </div>
+              <div class="curved-bottom-edge">
+                <svg viewBox="0 0 400 32" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M0,0 L400,0 L400,10 C280,32 120,32 0,10 Z" fill="#ffffff" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Home Body Content -->
+            <div class="home-body">
+
+              <!-- UNREGISTERED STATE CONTAINER -->
+              <div class="home-state-section" id="state-unregistered-view">
+
+                <!-- Accordion Card 1: Accesso Semplificato -->
+                <article class="accordion-card" id="card-semplificato">
+                  <header class="card-header" onclick="toggleAccordion('card-semplificato')">
+                    <div class="card-icon-box">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </div>
+                    <div class="card-text">
+                      <h3 class="card-title" data-i18n="semplificato_title">Accesso semplificato</h3>
+                      <p class="card-subtitle" data-i18n="semplificato_subtitle">Accedi con credenziali CIE</p>
+                    </div>
+                    <button type="button" class="card-chevron-btn" aria-label="Espandi accesso semplificato">
+                      <svg class="chevron-icon" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  </header>
+                  <div class="card-accordion-content">
+                    <div class="accordion-inner">
+                      <h4 class="req-title" data-i18n="semplificato_req_title">Elenco di requisiti autenticazione 1 e 2
+                        livello:</h4>
+                      <ul class="req-list">
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_cf">Codice Fiscale</span>
+                        </li>
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_pwd">Password credenziali CIE</span>
+                        </li>
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_otp">Codice temporaneo OTP (SMS o app CieID)</span>
+                        </li>
+                      </ul>
+                      <button type="button" class="btn btn-secondary w-full"
+                        onclick="openModal('semplificato-login-modal')">
+                        <span data-i18n="btn_accedi_credenziali">Accedi con credenziali</span>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Accordion Card 2: Accesso Completo -->
+                <article class="accordion-card" id="card-completo">
+                  <header class="card-header" onclick="toggleAccordion('card-completo')">
+                    <div class="card-icon-box">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <circle cx="7" cy="15" r="1"></circle>
+                      </svg>
+                    </div>
+                    <div class="card-text">
+                      <h3 class="card-title" data-i18n="completo_title">Accesso completo</h3>
+                      <p class="card-subtitle" data-i18n="completo_subtitle">con Carta d'Identità Elettronica (CIE)</p>
+                    </div>
+                    <button type="button" class="card-chevron-btn" aria-label="Espandi accesso completo">
+                      <svg class="chevron-icon" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  </header>
+                  <div class="card-accordion-content">
+                    <div class="accordion-inner">
+                      <h4 class="req-title" data-i18n="completo_req_title">Elenco di requisiti autenticazione 3 livello:
+                      </h4>
+                      <ul class="req-list">
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_cie_fisica">Carta CIE fisica con microchip</span>
+                        </li>
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_pin_8">Codice PIN a 8 cifre (1ª e 2ª parte)</span>
+                        </li>
+                        <li>
+                          <span class="req-bullet">•</span>
+                          <span data-i18n="req_nfc">Smartphone abilitato alla tecnologia NFC</span>
+                        </li>
+                      </ul>
+                      <button type="button" class="btn btn-primary w-full" onclick="navigateTo('screen-pin')">
+                        <span data-i18n="btn_inizia_pin">Inizia / Inserisci PIN</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+
+              </div>
+
+              <!-- REGISTERED (CONFIGURED) STATE CONTAINER -->
+              <div class="home-state-section hidden" id="state-registered-view">
+
+                <!-- Registered Top Card: Accesso Completo with prominent QR Code Button -->
+                <article class="registered-card">
+                  <div class="registered-badge">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span data-i18n="card_registered_badge">CIE REGISTRATA & ATTIVA</span>
+                  </div>
+
+                  <div class="registered-header">
+                    <div class="card-icon-box filled">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <path d="M12 14h4" />
+                      </svg>
+                    </div>
+                    <div class="registered-info">
+                      <h3 class="card-title" data-i18n="registered_card_title">Accesso completo</h3>
+                      <p class="card-subtitle" data-i18n="registered_card_sub">con Carta d'Identità Elettronica (CIE)
+                      </p>
+                      <div class="card-meta">
+                        <span class="card-id-preview">CIE: CA 98214 TR</span>
+                        <span class="card-holder-name">M. ROSSI</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Prominent Button: "Entra con QR code" -->
+                  <div class="registered-actions">
+                    <button type="button" class="btn btn-primary btn-large w-full" onclick="openQrScanner()">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                        <line x1="7" y1="7" x2="7.01" y2="7" stroke-width="3"></line>
+                        <line x1="18" y1="7" x2="18.01" y2="7" stroke-width="3"></line>
+                        <line x1="7" y1="18" x2="7.01" y2="18" stroke-width="3"></line>
+                        <line x1="18" y1="18" x2="18.01" y2="18" stroke-width="3"></line>
+                      </svg>
+                      <span data-i18n="btn_entra_qr">Entra con QR code</span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline w-full" onclick="navigateTo('screen-nfc')">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M2 12a10 10 0 0 1 10-10" />
+                        <path d="M6 12a6 6 0 0 1 6-6" />
+                        <circle cx="12" cy="12" r="2" />
+                      </svg>
+                      <span data-i18n="btn_autentica_nfc">Autentica con lettura NFC</span>
+                    </button>
+                  </div>
+                </article>
+
+                <!-- Registered Second Card: Accesso Semplificato -->
+                <article class="accordion-card mt-3" id="card-semplificato-registered">
+                  <header class="card-header" onclick="toggleAccordion('card-semplificato-registered')">
+                    <div class="card-icon-box">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </div>
+                    <div class="card-text">
+                      <h3 class="card-title" data-i18n="semplificato_title">Accesso semplificato</h3>
+                      <p class="card-subtitle" data-i18n="semplificato_subtitle">Accedi con credenziali CIE</p>
+                    </div>
+                    <button type="button" class="card-chevron-btn" aria-label="Espandi accesso semplificato">
+                      <svg class="chevron-icon" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  </header>
+                  <div class="card-accordion-content">
+                    <div class="accordion-inner">
+                      <h4 class="req-title" data-i18n="semplificato_req_title">Elenco di requisiti autenticazione 1 e 2
+                        livello:</h4>
+                      <ul class="req-list">
+                        <li><span class="req-bullet">•</span> <span data-i18n="req_cf">Codice Fiscale</span></li>
+                        <li><span class="req-bullet">•</span> <span data-i18n="req_pwd">Password credenziali CIE</span>
+                        </li>
+                        <li><span class="req-bullet">•</span> <span data-i18n="req_otp">Codice temporaneo OTP</span>
+                        </li>
+                      </ul>
+                      <button type="button" class="btn btn-secondary w-full"
+                        onclick="openModal('semplificato-login-modal')">
+                        <span data-i18n="btn_accedi_credenziali">Accedi con credenziali</span>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+
+              </div>
+
+              <!-- Quick Security Notice Badge -->
+              <div class="security-banner">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span data-i18n="security_notice">Identità Digitale Ufficiale dello Stato Italiano</span>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 2: INSERISCI PIN (Step 1 di 2)          -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-pin" aria-label="Inserisci PIN">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="navigateBack()" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <span class="step-indicator" data-i18n="step_1_of_2">Step 1 di 2</span>
+                <h2 class="sub-title" data-i18n="pin_screen_title">INSERISCI PIN</h2>
+              </div>
+              <button type="button" class="help-btn" onclick="openContextualHelp('pin')"
+                aria-label="Aiuto contestuale PIN" title="Aiuto contestuale">
+                <span class="help-question-mark">?</span>
+              </button>
+            </header>
+
+            <div class="sub-body pin-flow-body">
+              <!-- Visual Illustration: Clean wireframe graphic of an opened envelope showing a card/slip sticking out with the text "PIN *********" -->
+              <div class="pin-envelope-box">
+                <svg viewBox="0 0 170 108" width="150" height="96" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="envelope-svg"
+                  aria-label="Busta postale con PIN">
+                  <!-- Envelope open back flap -->
+                  <polygon points="15,44 85,8 155,44" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+
+                  <!-- Slip / Card sticking out with PIN ********* -->
+                  <rect x="30" y="16" width="110" height="58" rx="4" fill="#ffffff" stroke="#003366"
+                    stroke-width="2.2" />
+                  <!-- Slip decorative notch / header -->
+                  <rect x="38" y="24" width="22" height="3.5" rx="1.5" fill="#94a3b8" stroke="none" />
+                  <text x="85" y="44" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="700"
+                    fill="#003366" text-anchor="middle" letter-spacing="0.5">PIN *********</text>
+                  <line x1="38" y1="55" x2="132" y2="55" stroke="#cbd5e1" stroke-dasharray="3 3" stroke-width="1.5" />
+
+                  <!-- Envelope front body / pocket -->
+                  <rect x="15" y="44" width="140" height="60" rx="4" fill="#f8fafc" stroke="#1e293b" stroke-width="2" />
+                  <!-- Fold diagonals -->
+                  <line x1="15" y1="104" x2="70" y2="70" stroke="#1e293b" stroke-width="1.8" />
+                  <line x1="155" y1="104" x2="100" y2="70" stroke="#1e293b" stroke-width="1.8" />
+                  <polyline points="15,44 85,82 155,44" fill="#ffffff" fill-opacity="0.95" stroke="#1e293b"
+                    stroke-width="1.8" />
+                </svg>
+              </div>
+
+              <!-- Instructional text below the graphic -->
+              <div class="pin-instruction-block">
+                <p class="pin-instruction-heading" data-i18n="pin_find_label">Trovi il PIN diviso in due parti:</p>
+                <ul class="pin-bullets-list">
+                  <li data-i18n="pin_part1">• 4 cifre sono contenute nella ricevuta cartacea fornita durante il rilascio
+                    CIE</li>
+                  <li data-i18n="pin_part2">• 4 cifre nella busta arrivata per posta insieme alla carta</li>
+                </ul>
+                <p class="pin-instruction-note" data-i18n="pin_part_note">(Oppure inserisci il tuo PIN personale, se lo
+                  hai modificato).</p>
+              </div>
+
+              <!-- PIN Input: 8 dashed character slots (_ _ _ _ _ _ _ _) -->
+              <div class="pin-slots-wrapper">
+                <div class="pin-dashed-slots-row" id="pin-boxes-container">
+                  <div class="dashed-slot active" data-index="0"></div>
+                  <div class="dashed-slot" data-index="1"></div>
+                  <div class="dashed-slot" data-index="2"></div>
+                  <div class="dashed-slot" data-index="3"></div>
+                  <span class="dashed-slot-separator" aria-hidden="true">-</span>
+                  <div class="dashed-slot" data-index="4"></div>
+                  <div class="dashed-slot" data-index="5"></div>
+                  <div class="dashed-slot" data-index="6"></div>
+                  <div class="dashed-slot" data-index="7"></div>
+                </div>
+
+                <!-- Inline Recovery Link (Crucial UX feature) -->
+                <div class="pin-recovery-inline-box">
+                  <span class="recovery-text" data-i18n="pin_recovery_prefix">Hai perso o dimenticato il PIN?</span>
+                  <span class="recovery-action" data-i18n="pin_recovery_vai">Vai a</span>
+                  <a href="javascript:void(0)" onclick="navigateTo('screen-gestione')" class="recovery-deep-link"
+                    data-i18n="pin_recovery_link">'Gestione Carta'</a>
+                </div>
+              </div>
+
+              <!-- Numerical On-screen Keypad -->
+              <div class="keypad-grid" id="pin-keypad">
+                <button type="button" class="key-btn" onclick="pressPinKey('1')">1</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('2')">2</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('3')">3</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('4')">4</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('5')">5</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('6')">6</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('7')">7</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('8')">8</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('9')">9</button>
+                <button type="button" class="key-btn key-action" onclick="fillDemoPin()"
+                  title="Inserisci PIN di prova">DEMO</button>
+                <button type="button" class="key-btn" onclick="pressPinKey('0')">0</button>
+                <button type="button" class="key-btn key-action" onclick="deletePinKey()"
+                  aria-label="Cancella cifra">⌫</button>
+              </div>
+
+              <div class="action-footer">
+                <button type="button" class="btn btn-primary w-full" id="pin-submit-btn" disabled onclick="submitPin()">
+                  <span data-i18n="btn_procedi">Procedi</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 3: LETTURA CARTA NFC (Step 2 di 2)      -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-nfc" aria-label="Lettura Carta">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="navigateBack()" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <span class="step-indicator" data-i18n="step_2_of_2">Step 2 di 2</span>
+                <h2 class="sub-title" data-i18n="nfc_screen_title">LETTURA CARTA</h2>
+              </div>
+              <button type="button" class="help-btn" onclick="openContextualHelp('nfc')"
+                aria-label="Aiuto contestuale NFC" title="Aiuto contestuale">
+                <span class="help-question-mark">?</span>
+              </button>
+            </header>
+
+            <div class="sub-body nfc-flow">
+              <!-- Center Illustration: Smartphone back view with CIE card angled on UPPER part + radiating NFC waves -->
+              <div class="nfc-diagram-card">
+                <div class="phone-schematic">
+                  <!-- Phone outline (back view) -->
+                  <div class="schematic-phone-body">
+                    <!-- Camera module on top back -->
+                    <div class="schematic-camera-ring">
+                      <div class="schematic-lens"></div>
+                      <div class="schematic-lens"></div>
+                      <div class="schematic-flash"></div>
+                    </div>
+
+                    <!-- Radiating NFC waves emanating from phone upper zone -->
+                    <div class="nfc-waves" id="nfc-waves">
+                      <span class="wave wave-1"></span>
+                      <span class="wave wave-2"></span>
+                      <span class="wave wave-3"></span>
+                    </div>
+
+                    <!-- Contactless CIE Card angled against UPPER part of phone -->
+                    <div class="schematic-cie-card">
+                      <div class="cie-card-header-bar">
+                        <span class="cie-card-badge">CIE</span>
+                        <!-- Radio waves contactless icon -->
+                        <svg class="cie-rfid-icon" viewBox="0 0 24 24" width="13" height="13" fill="none"
+                          stroke="currentColor" stroke-width="2.2">
+                          <path d="M5 18a8 8 0 0 1 0-12"></path>
+                          <path d="M8.5 15.5a4.5 4.5 0 0 1 0-7"></path>
+                          <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                        </svg>
+                      </div>
+                      <div class="cie-card-chip"></div>
+                      <div class="cie-card-strip"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dynamic Scanning Simulation Card -->
+              <div class="nfc-status-card">
+                <div class="nfc-status-row">
+                  <span class="nfc-status-label" id="nfc-status-text" data-i18n="nfc_reading_status">
+                    Lasciala immobile: lettura in corso...
+                  </span>
+                  <span class="nfc-percent" id="nfc-percent">25%</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+                  <div class="progress-bar-fill" id="nfc-progress-fill" style="width: 25%;"></div>
+                </div>
+                <div class="nfc-timing" data-i18n="nfc_estimated_time">Tempo stimato: 4 secondi</div>
+              </div>
+
+              <!-- Warning Callout at Bottom: Warning triangle icon (⚠️) + text -->
+              <div class="nfc-warning-callout" role="alert">
+                <span class="warning-callout-icon" aria-hidden="true">⚠️</span>
+                <span class="warning-callout-text" data-i18n="nfc_warning_callout">
+                  Appoggia la carta sul retro, nella parte alta del telefono.
+                </span>
+              </div>
+
+              <!-- Action button for manual simulation trigger -->
+              <div class="action-footer mt-auto">
+                <button type="button" class="btn btn-outline w-full" id="start-nfc-btn" onclick="simulateNfcScan()">
+                  <span data-i18n="btn_simula_lettura">Simula scansione NFC</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 4: REGISTRAZIONE COMPLETATA (Success)   -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-success" aria-label="Registra carta">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="completeRegistrationAndGoHome()"
+                aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <h2 class="sub-title" data-i18n="success_header_title">Registra carta</h2>
+              </div>
+              <div style="width: 36px;"></div>
+            </header>
+
+            <div class="sub-body text-center success-flow-body">
+              <h3 class="success-title" data-i18n="success_title">
+                Carta di Identità Elettronica registrata correttamente
+              </h3>
+
+              <!-- Center graphic box (checkmark/card illustration + confirmation text for Level 3 access) -->
+              <div class="success-graphic-container">
+                <div class="success-card-box">
+                  <!-- Registered Card Visual -->
+                  <div class="card-art">
+                    <div class="card-art-chip"></div>
+                    <div class="card-art-flag">
+                      <span class="it-green"></span><span class="it-white"></span><span class="it-red"></span>
+                    </div>
+                    <div class="card-art-title">REPUBBLICA ITALIANA</div>
+                    <div class="card-art-type">CARTA D'IDENTITÀ / IDENTITY CARD</div>
+                    <div class="card-art-holder">MARIO ROSSI</div>
+                    <div class="card-art-number">CA 98214 TR</div>
+                  </div>
+
+                  <div class="success-icon-badge" aria-label="Operazione completata con successo">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#ffffff" stroke-width="3.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="success-level3-badge">
+                  <span class="level3-dot"></span>
+                  <span class="level3-text" data-i18n="level3_active_label">ACCESSO LIVELLO 3 ATTIVO</span>
+                </div>
+
+                <p class="success-desc" data-i18n="success_level3_text">
+                  La tua Carta di Identità Elettronica è ora attiva per l'accesso di Livello 3. Puoi accedere ai servizi
+                  online della Pubblica Amministrazione con lettura NFC o inquadrando il QR Code.
+                </p>
+              </div>
+
+              <!-- Two stacked buttons at the bottom: [ Torna alla home ] and [ Configura ] -->
+              <div class="success-actions mt-auto">
+                <button type="button" class="btn btn-primary w-full" id="btn-success-home"
+                  onclick="completeRegistrationAndGoHome()">
+                  <span data-i18n="btn_torna_home">Torna alla home</span>
+                </button>
+                <button type="button" class="btn btn-outline w-full" id="btn-success-configura"
+                  onclick="openConfiguraFlow()">
+                  <span data-i18n="btn_configura">Configura</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 5: GESTIONE CARTA                       -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-gestione" aria-label="Gestione Carta">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="navigateBack()" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <h2 class="sub-title" data-i18n="gestione_title">GESTIONE CARTA</h2>
+              </div>
+              <button type="button" class="help-btn" onclick="openContextualHelp('gestione')"
+                aria-label="Aiuto contestuale">
+                <span class="help-question-mark">?</span>
+              </button>
+            </header>
+
+            <div class="sub-body gestione-flow-body">
+              <!-- Short introductory text explaining card management options -->
+              <p class="gestione-intro-text" data-i18n="gestione_intro_text">
+                Gestisci la tua Carta di Identità Elettronica, sblocca la carta o reimposta i codici di sicurezza PIN e
+                PUK.
+              </p>
+
+              <!-- Central physical card graphic placeholder -->
+              <div class="gestione-card-display">
+                <div class="card-display-top">
+                  <span class="card-chip-symbol"></span>
+                  <span class="card-status-pill" data-i18n="status_active">ATTIVA</span>
+                </div>
+                <div class="card-display-center">
+                  <div class="card-number-lbl" data-i18n="lbl_numero_cie">Numero Carta</div>
+                  <div class="card-number-val">CA 98214 TR</div>
+                </div>
+                <div class="card-display-bottom">
+                  <div>
+                    <div class="card-field-lbl" data-i18n="lbl_intestatario">Intestatario</div>
+                    <div class="card-field-val">MARIO ROSSI</div>
+                  </div>
+                  <div>
+                    <div class="card-field-lbl" data-i18n="lbl_scadenza">Scadenza</div>
+                    <div class="card-field-val">28/05/2032</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3 Stacked Action Buttons -->
+              <div class="gestione-actions-list">
+                <!-- Button 1: Sblocca carta / Recupera PIN -->
+                <button type="button" class="action-card-btn" id="btn-sblocca-carta" onclick="startUnlockCardFlow()">
+                  <div class="action-btn-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    </svg>
+                  </div>
+                  <div class="action-btn-info">
+                    <span class="action-btn-title" data-i18n="btn_sblocca_carta">Sblocca carta / Recupera PIN</span>
+                    <span class="action-btn-sub" data-i18n="btn_sblocca_carta_sub">Usa il codice PUK se la carta è
+                      bloccata</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Button 2: Cambia PIN -->
+                <button type="button" class="action-card-btn" id="btn-cambia-pin" onclick="startChangePinFlow()">
+                  <div class="action-btn-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </div>
+                  <div class="action-btn-info">
+                    <span class="action-btn-title" data-i18n="btn_cambia_pin">Cambia PIN</span>
+                    <span class="action-btn-sub" data-i18n="btn_cambia_pin_sub">Modifica il tuo codice personale a 8
+                      cifre</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+
+                <!-- Button 3: Recupero PUK -->
+                <button type="button" class="action-card-btn" id="btn-recupero-puk-action"
+                  onclick="openModal('recovery-puk-modal')">
+                  <div class="action-btn-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </div>
+                  <div class="action-btn-info">
+                    <span class="action-btn-title" data-i18n="btn_recupero_puk">Recupero PUK</span>
+                    <span class="action-btn-sub" data-i18n="btn_recupero_puk_sub">Richiedi o recupera il tuo codice
+                      PUK</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Assistance Footer Link -->
+              <div class="text-center mt-auto pb-2">
+                <button type="button" class="link-btn" onclick="navigateTo('screen-assistenza')">
+                  <span data-i18n="need_help_faq">Hai problemi con la carta? Consulta l'assistenza</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 6: ASSISTENZA & FAQ                     -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-assistenza" aria-label="Assistenza">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="navigateBack()" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <h2 class="sub-title" data-i18n="assistenza_title">ASSISTENZA</h2>
+              </div>
+              <button type="button" class="help-btn" onclick="openContextualHelp('assistenza')"
+                aria-label="Aiuto contestuale">
+                <span class="help-question-mark">?</span>
+              </button>
+            </header>
+
+            <div class="sub-body">
+              <!-- Official Contact Header Card from Wireframe -->
+              <div class="contact-card">
+                <p class="contact-intro" data-i18n="contact_intro">
+                  Per assistenza sull'app CieID e sulle credenziali CIE puoi consultare la sezione Domande frequenti o
+                  contattaci ai seguenti canali:
+                </p>
+                <div class="contact-links-grid">
+                  <a href="mailto:cie.cittadini@interno.it" class="contact-chip"
+                    aria-label="Scrivi a cie.cittadini@interno.it">
+                    <!-- Envelope Icon -->
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                      <path d="M22 6L12 13L2 6"></path>
+                    </svg>
+                    <span>cie.cittadini@interno.it</span>
+                  </a>
+                  <a href="tel:0642985699" class="contact-chip" aria-label="Chiama il numero 06 4298 5699">
+                    <!-- Phone Icon -->
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                      </path>
+                    </svg>
+                    <span>06 4298 5699</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- FAQ Section (Domande frequenti with 5 specified items) -->
+              <div class="faq-container">
+                <h3 class="faq-heading" data-i18n="faq_heading">Domande frequenti:</h3>
+
+                <div class="faq-list">
+                  <!-- FAQ 1: Non riesco a leggere la carta (HIGHLIGHTED IN BLUE WHEN EXPANDED + EXPLANATORY BOX + TUTORIAL BUTTON) -->
+                  <details class="faq-item highlight-blue" id="faq-item-nfc" open>
+                    <summary class="faq-question">
+                      <span data-i18n="faq_nfc_read">Non riesco a leggere la carta</span>
+                      <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer">
+                      <div class="faq-explanatory-box">
+                        <div class="box-icon-row">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--cie-navy)"
+                            stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                          </svg>
+                          <strong data-i18n="nfc_box_title">Istruzioni di posizionamento:</strong>
+                        </div>
+                        <p data-i18n="nfc_box_desc">
+                          Appoggia la Carta d'Identità Elettronica sul <strong>retro dello smartphone, nella parte
+                            alta</strong> (in corrispondenza dell'antenna NFC o del modulo fotocamera).
+                        </p>
+                        <ul class="nfc-bullet-list">
+                          <li data-i18n="nfc_tip_1">• Mantieni la carta immobile a contatto per almeno <strong>4
+                              secondi</strong>.</li>
+                          <li data-i18n="nfc_tip_2">• Rimuovi custodie protettive spesse, anelli metallici o carte
+                            magnetiche.</li>
+                          <li data-i18n="nfc_tip_3">• Verifica che la funzione <strong>NFC</strong> sia attiva nelle
+                            Impostazioni del telefono.</li>
+                        </ul>
+                        <div class="box-action-row">
+                          <button type="button" class="btn btn-sm btn-primary" onclick="openModal('tutorial-modal')"
+                            data-i18n="btn_tutorial_short">
+                            [ Tutorial ]
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline" onclick="navigateTo('screen-nfc')"
+                            data-i18n="btn_prova_lettura">
+                            Prova lettura NFC
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <!-- FAQ 2: Come impostare una nuova password per le credenziali -->
+                  <details class="faq-item">
+                    <summary class="faq-question">
+                      <span data-i18n="faq_new_pwd">Come impostare una nuova password per le credenziali</span>
+                      <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer" data-i18n="faq_new_pwd_ans">
+                      Se hai dimenticato la password, apri "Accesso semplificato", tocca "Recupera password" e inserisci
+                      il tuo Codice Fiscale. Riceverai un link di ripristino all'indirizzo email certificato associato
+                      alla tua CIE.
+                    </div>
+                  </details>
+
+                  <!-- FAQ 3: La password delle tue credenziali CIE sta per scadere -->
+                  <details class="faq-item">
+                    <summary class="faq-question">
+                      <span data-i18n="faq_pwd_expiring">La password delle tue credenziali CIE sta per scadere</span>
+                      <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer" data-i18n="faq_pwd_expiring_ans">
+                      La password delle credenziali di livello 1 e 2 ha una validità prefissata di sicurezza (180
+                      giorni). Puoi rinnovarla direttamente da questa app nella sezione "Gestione Credenziali" prima
+                      della data di scadenza.
+                    </div>
+                  </details>
+
+                  <!-- FAQ 4: Come accedo tramite QR code -->
+                  <details class="faq-item">
+                    <summary class="faq-question">
+                      <span data-i18n="faq_qr_access">Come accedo tramite QR code</span>
+                      <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer" data-i18n="faq_qr_access_ans">
+                      Sui portali della Pubblica Amministrazione seleziona "Entra con CIE", scegli Livello 3 e inquadra
+                      con l'app CieID il codice QR a video. Conferma con il codice PIN o con il riconoscimento
+                      biometrico del tuo smartphone.
+                    </div>
+                  </details>
+
+                  <!-- FAQ 5: Come posso recuperare il PUK -->
+                  <details class="faq-item">
+                    <summary class="faq-question">
+                      <span data-i18n="faq_puk_recover">Come posso recuperare il PUK</span>
+                      <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </summary>
+                    <div class="faq-answer" data-i18n="faq_puk_recover_ans">
+                      Il codice PUK è composto da 8 cifre: le prime 4 si trovano sul foglio di riepilogo cartaceo
+                      rilasciato dal Comune, mentre le seconde 4 si trovano nella lettera con cui è stata recapitata la
+                      carta. Se hai smarrito il PUK, tocca "Aiuto e Recupero" e seleziona "Recupero PUK".
+                    </div>
+                  </details>
+                </div>
+              </div>
+
+              <!-- Emergency Footer Section (Blocco Carta + Consulta la guida) -->
+              <footer class="emergency-footer-card">
+                <div class="emergency-header-row">
+                  <div class="emergency-phone-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                      </path>
+                    </svg>
+                  </div>
+                  <div class="emergency-title-text">
+                    <span class="emergency-label" data-i18n="tag_blocco_bold">BLOCCO CARTA 800 098 558</span>
+                    <small class="emergency-sub" data-i18n="emergency_sub">In caso di furto o smarrimento della CIE
+                      fisica</small>
+                  </div>
+                </div>
+
+                <div class="emergency-actions">
+                  <button type="button" class="btn btn-outline w-full" onclick="openModal('guide-modal')">
+                    <span data-i18n="btn_consulta_guida">[ Consulta la guida ]</span>
+                  </button>
+                </div>
+              </footer>
+            </div>
+          </section>
+
+          <!-- ============================================== -->
+          <!-- SCREEN 7: SBLOCCA CARTA / CAMBIO PIN (PUK)     -->
+          <!-- ============================================== -->
+          <section class="screen-view" id="screen-puk" aria-label="Sblocca carta o Cambia PIN">
+            <header class="sub-header">
+              <button type="button" class="back-btn" onclick="handlePukBack()" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div class="sub-header-center">
+                <div class="recovery-steps-indicator" id="recovery-steps-indicator">
+                  <span class="step-nav-item active" id="rec-step-1-nav" data-i18n="step_1">Step 1</span>
+                  <span class="step-nav-sep" id="rec-sep-1">—</span>
+                  <span class="step-nav-item" id="rec-step-2-nav" data-i18n="step_2">Step 2</span>
+                  <span class="step-nav-sep" id="rec-sep-2">—</span>
+                  <span class="step-nav-item" id="rec-step-3-nav" data-i18n="step_3">Step 3</span>
+                </div>
+                <h2 class="sub-title" id="recovery-header-title" data-i18n="sblocca_carta_title">Sblocca carta</h2>
+              </div>
+              <button type="button" class="help-btn" onclick="openContextualHelp('puk')"
+                aria-label="Aiuto contestuale PUK" title="Aiuto contestuale">
+                <span class="help-question-mark">?</span>
+              </button>
+            </header>
+
+            <div class="sub-body recovery-flow-body">
+              <!-- ============================================== -->
+              <!-- STEP 1: INSERISCI IL CODICE PUK (Step 1 of 3)  -->
+              <!-- ============================================== -->
+              <div id="puk-step-1-content" class="recovery-step-view">
+                <h3 class="section-heading-recovery" data-i18n="sblocca_puk_title">INSERISCI IL CODICE PUK</h3>
+
+                <div class="pin-slots-wrapper">
+                  <div class="pin-dashed-slots-row" id="puk-boxes-container">
+                    <div class="dashed-slot active" data-index="0"></div>
+                    <div class="dashed-slot" data-index="1"></div>
+                    <div class="dashed-slot" data-index="2"></div>
+                    <div class="dashed-slot" data-index="3"></div>
+                    <span class="dashed-slot-separator" aria-hidden="true">-</span>
+                    <div class="dashed-slot" data-index="4"></div>
+                    <div class="dashed-slot" data-index="5"></div>
+                    <div class="dashed-slot" data-index="6"></div>
+                    <div class="dashed-slot" data-index="7"></div>
+                  </div>
+                </div>
+
+                <!-- Instructional text below the input -->
+                <div class="recovery-instruction-card">
+                  <strong class="recovery-instruction-title" data-i18n="puk_desc_title">Il PUK è composto da:</strong>
+                  <ul class="recovery-bullets">
+                    <li data-i18n="puk_desc_1">• 4 cifre fornite al momento della richiesta della Carta</li>
+                    <li data-i18n="puk_desc_2">• 4 cifre fornite insieme alla Carta</li>
+                  </ul>
+                </div>
+
+                <!-- Bottom link: Hai perso o dimenticato il PUK? Recuperalo -->
+                <div class="recovery-link-container text-center">
+                  <span data-i18n="puk_lost_question">Hai perso o dimenticato il PUK?</span>
+                  <a href="javascript:void(0)" onclick="openModal('recovery-puk-modal')" class="link-bold-underline"
+                    data-i18n="puk_recuperalo_link">Recuperalo</a>
+                </div>
+
+                <!-- Number Keypad for PUK -->
+                <div class="keypad-grid" id="puk-keypad">
+                  <button type="button" class="key-btn" onclick="pressPukKey('1')">1</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('2')">2</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('3')">3</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('4')">4</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('5')">5</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('6')">6</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('7')">7</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('8')">8</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('9')">9</button>
+                  <button type="button" class="key-btn key-action" onclick="fillDemoPuk()"
+                    title="Inserisci PUK di prova">DEMO</button>
+                  <button type="button" class="key-btn" onclick="pressPukKey('0')">0</button>
+                  <button type="button" class="key-btn key-action" onclick="deletePukKey()"
+                    aria-label="Cancella cifra">⌫</button>
+                </div>
+
+                <div class="action-footer">
+                  <button type="button" class="btn btn-primary w-full" id="puk-next-btn" disabled
+                    onclick="goToPukStep2()">
+                    <span data-i18n="btn_procedi">Procedi</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- STEP 2: INSERISCI IL NUOVO PIN (Step 2 of 3)   -->
+              <!-- ============================================== -->
+              <div id="puk-step-2-content" class="recovery-step-view hidden">
+                <h3 class="section-heading-recovery" data-i18n="newpin_step2_title">INSERISCI IL NUOVO PIN</h3>
+
+                <div class="pin-slots-wrapper">
+                  <div class="pin-dashed-slots-row" id="newpin-boxes-container">
+                    <div class="dashed-slot active" data-index="0"></div>
+                    <div class="dashed-slot" data-index="1"></div>
+                    <div class="dashed-slot" data-index="2"></div>
+                    <div class="dashed-slot" data-index="3"></div>
+                    <span class="dashed-slot-separator" aria-hidden="true">-</span>
+                    <div class="dashed-slot" data-index="4"></div>
+                    <div class="dashed-slot" data-index="5"></div>
+                    <div class="dashed-slot" data-index="6"></div>
+                    <div class="dashed-slot" data-index="7"></div>
+                  </div>
+                </div>
+
+                <!-- Keypad for New PIN -->
+                <div class="keypad-grid" id="newpin-keypad">
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('1')">1</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('2')">2</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('3')">3</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('4')">4</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('5')">5</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('6')">6</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('7')">7</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('8')">8</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('9')">9</button>
+                  <button type="button" class="key-btn key-action" onclick="fillDemoNewPin()"
+                    title="Inserisci PIN di prova">DEMO</button>
+                  <button type="button" class="key-btn" onclick="pressNewPinKey('0')">0</button>
+                  <button type="button" class="key-btn key-action" onclick="deleteNewPinKey()"
+                    aria-label="Cancella cifra">⌫</button>
+                </div>
+
+                <div class="action-footer">
+                  <button type="button" class="btn btn-primary w-full" id="newpin-next-btn" disabled
+                    onclick="goToPukStep3()">
+                    <span data-i18n="btn_procedi">Procedi</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- STEP 3: RIPETI IL NUOVO PIN (Step 3 of 3)      -->
+              <!-- ============================================== -->
+              <div id="puk-step-3-content" class="recovery-step-view hidden">
+                <h3 class="section-heading-recovery" data-i18n="repeatpin_step3_title">RIPETI IL NUOVO PIN</h3>
+                <p class="recovery-subtitle-note text-center" data-i18n="repeatpin_subtitle_note">
+                  Prendi nota e tieni al sicuro il nuovo codice PIN, sarà necessario per le prossime richieste di
+                  autenticazione
+                </p>
+
+                <div class="pin-slots-wrapper">
+                  <div class="pin-dashed-slots-row" id="repeatpin-boxes-container">
+                    <div class="dashed-slot active" data-index="0"></div>
+                    <div class="dashed-slot" data-index="1"></div>
+                    <div class="dashed-slot" data-index="2"></div>
+                    <div class="dashed-slot" data-index="3"></div>
+                    <span class="dashed-slot-separator" aria-hidden="true">-</span>
+                    <div class="dashed-slot" data-index="4"></div>
+                    <div class="dashed-slot" data-index="5"></div>
+                    <div class="dashed-slot" data-index="6"></div>
+                    <div class="dashed-slot" data-index="7"></div>
+                  </div>
+                </div>
+
+                <!-- Keypad for Repeat PIN -->
+                <div class="keypad-grid" id="repeatpin-keypad">
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('1')">1</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('2')">2</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('3')">3</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('4')">4</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('5')">5</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('6')">6</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('7')">7</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('8')">8</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('9')">9</button>
+                  <button type="button" class="key-btn key-action" onclick="fillDemoRepeatPin()"
+                    title="Inserisci PIN identico">DEMO</button>
+                  <button type="button" class="key-btn" onclick="pressRepeatPinKey('0')">0</button>
+                  <button type="button" class="key-btn key-action" onclick="deleteRepeatPinKey()"
+                    aria-label="Cancella cifra">⌫</button>
+                </div>
+
+                <div class="action-footer">
+                  <button type="button" class="btn btn-primary w-full" id="repeatpin-next-btn" disabled
+                    onclick="goToPukNfcScan()">
+                    <span data-i18n="btn_procedi_lettura">Procedi alla lettura</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- STEP 4: LETTURA CARTA NFC (Screens 8 & 9)      -->
+              <!-- ============================================== -->
+              <div id="puk-step-nfc-content" class="recovery-step-view hidden nfc-flow">
+                <h3 class="section-heading-recovery" data-i18n="nfc_screen_title">LETTURA CARTA</h3>
+
+                <!-- Center Illustration: Smartphone back view with CIE card angled on UPPER part + radiating NFC waves -->
+                <div class="nfc-diagram-card">
+                  <div class="phone-schematic">
+                    <div class="schematic-phone-body">
+                      <div class="schematic-camera-ring">
+                        <div class="schematic-lens"></div>
+                        <div class="schematic-lens"></div>
+                        <div class="schematic-flash"></div>
+                      </div>
+
+                      <div class="nfc-waves" id="puk-nfc-waves">
+                        <span class="wave wave-1"></span>
+                        <span class="wave wave-2"></span>
+                        <span class="wave wave-3"></span>
+                      </div>
+
+                      <div class="schematic-cie-card">
+                        <div class="cie-card-header-bar">
+                          <span class="cie-card-badge">CIE</span>
+                          <svg class="cie-rfid-icon" viewBox="0 0 24 24" width="13" height="13" fill="none"
+                            stroke="currentColor" stroke-width="2.2">
+                            <path d="M5 18a8 8 0 0 1 0-12"></path>
+                            <path d="M8.5 15.5a4.5 4.5 0 0 1 0-7"></path>
+                            <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                          </svg>
+                        </div>
+                        <div class="cie-card-chip"></div>
+                        <div class="cie-card-strip"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Scanning Simulation Card -->
+                <div class="nfc-status-card">
+                  <div class="nfc-status-row">
+                    <span class="nfc-status-label" id="puk-nfc-status-text" data-i18n="nfc_reading_status">
+                      Lasciala immobile: lettura in corso...
+                    </span>
+                    <span class="nfc-percent" id="puk-nfc-percent">25%</span>
+                  </div>
+                  <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    aria-valuenow="25">
+                    <div class="progress-bar-fill" id="puk-nfc-progress-fill" style="width: 25%;"></div>
+                  </div>
+                  <div class="nfc-timing" data-i18n="nfc_estimated_time">Tempo stimato: 4 secondi</div>
+                </div>
+
+                <!-- Warning Callout at Bottom -->
+                <div class="nfc-warning-callout" role="alert">
+                  <span class="warning-callout-icon" aria-hidden="true">⚠️</span>
+                  <span class="warning-callout-text" data-i18n="nfc_warning_callout">
+                    Appoggia la carta sul retro, nella parte alta del telefono.
+                  </span>
+                </div>
+
+                <!-- Action button for manual simulation trigger -->
+                <div class="action-footer mt-auto">
+                  <button type="button" class="btn btn-outline w-full" id="puk-start-nfc-btn"
+                    onclick="simulatePukNfcScan()">
+                    <span data-i18n="btn_simula_lettura">Simula scansione NFC</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Centered Modal Dialog Overlay (Screen 9: Cambio PIN eseguito con successo) -->
+            <div class="cambio-pin-modal-overlay" id="modal-cambio-pin-success" role="dialog" aria-modal="true"
+              aria-labelledby="modal-cambio-pin-title">
+              <div class="cambio-pin-modal-card">
+                <div class="modal-success-icon-badge" aria-label="Operazione completata con successo">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ffffff" stroke-width="3.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <h3 class="modal-success-title" id="modal-cambio-pin-title" data-i18n="cambio_pin_success_title">
+                  CAMBIO PIN ESEGUITO CON SUCCESSO.
+                </h3>
+                <p class="modal-success-desc" data-i18n="cambio_pin_modal_desc">
+                  Il nuovo codice PIN a 8 cifre è stato registrato ed è pronto per l'autenticazione con la tua CIE.
+                </p>
+                <div class="modal-actions-box">
+                  <button type="button" class="btn btn-primary w-full" onclick="completeCambioPinAndGoHome()">
+                    <span data-i18n="btn_torna_home_bracket">[ Torna alla home ]</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div> <!-- /screen-scroll-container -->
+
+        <!-- ============================================== -->
+        <!-- 3. PERSISTENT BOTTOM NAVIGATION BAR            -->
+        <!-- ============================================== -->
+        <nav class="bottom-nav-bar" id="bottom-nav">
+          <!-- Col 1: Gestione Carta -->
+          <button type="button" class="nav-tab" id="nav-gestione" onclick="navigateTo('screen-gestione')">
+            <svg class="nav-tab-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span class="nav-tab-label" data-i18n="nav_gestione">Gestione Carta</span>
+          </button>
+
+          <!-- Col 2: Center Home Tab (Active default) -->
+          <button type="button" class="nav-tab active" id="nav-home" onclick="navigateTo('screen-home')">
+            <div class="home-icon-circle">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <span class="nav-tab-label" data-i18n="nav_home">Home</span>
+          </button>
+
+          <!-- Col 3: Aiuto e Recupero with Pop-up trigger -->
+          <div class="nav-tab-wrapper">
+            <button type="button" class="nav-tab" id="nav-aiuto-btn" aria-haspopup="true" aria-expanded="false"
+              onclick="toggleAiutoPopup(event)">
+              <svg class="nav-tab-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"></line>
+              </svg>
+              <span class="nav-tab-label" data-i18n="nav_aiuto">Aiuto e Recupero</span>
+            </button>
+
+            <!-- Compact Pop-up Menu right above the tab -->
+            <div class="aiuto-popup-menu" id="aiuto-popup-menu" role="menu" aria-hidden="true">
+              <button type="button" class="popup-item" role="menuitem" onclick="openRecuperoPukFlow()">
+                <div class="popup-icon-badge">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+                <div class="popup-item-text">
+                  <strong data-i18n="popup_recupero_puk">Recupero PUK</strong>
+                  <small data-i18n="popup_recupero_puk_sub">Sblocca o reimposta PIN</small>
+                </div>
+              </button>
+
+              <div class="popup-divider"></div>
+
+              <button type="button" class="popup-item" role="menuitem" onclick="openAssistenzaScreen()">
+                <div class="popup-icon-badge">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div class="popup-item-text">
+                  <strong data-i18n="popup_assistenza_tutorial">Assistenza & Tutorial</strong>
+                  <small data-i18n="popup_assistenza_sub">FAQ, contatti e video guide</small>
+                </div>
+              </button>
+              <!-- Pointer caret down to the right tab -->
+              <div class="popup-caret"></div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Smartphone Bottom Home Indicator Bar -->
+        <div class="home-indicator"></div>
+
+        <!-- REUSABLE CONTEXTUAL HELP (?) SLIDE-UP DRAWER -->
+        <div class="help-drawer-overlay" id="help-drawer-overlay" onclick="closeContextualHelp()"></div>
+        <aside class="help-drawer" id="help-drawer" role="dialog" aria-modal="true" aria-labelledby="help-drawer-title">
+          <div class="drawer-handle-bar" onclick="closeContextualHelp()">
+            <span class="drawer-pill"></span>
+          </div>
+          <header class="drawer-header">
+            <div class="drawer-title-wrapper">
+              <span class="drawer-tag" id="help-drawer-tag">GUIDA</span>
+              <h3 class="drawer-title" id="help-drawer-title">Aiuto contestuale</h3>
+            </div>
+            <button type="button" class="drawer-close-btn" onclick="closeContextualHelp()"
+              aria-label="Chiudi guida">✕</button>
+          </header>
+
+          <div class="drawer-content" id="help-drawer-content">
+            <!-- Dynamically populated based on active task screen -->
+          </div>
+
+          <footer class="drawer-footer">
+            <button type="button" class="btn btn-outline w-full" onclick="goToAssistenzaFromContext()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"></line>
+              </svg>
+              <span data-i18n="drawer_btn_assistenza">Vai ad Assistenza completa</span>
+            </button>
+          </footer>
+        </aside>
+
+      </div> <!-- /screen-canvas -->
+    </div> <!-- /smartphone-frame -->
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODALS & OVERLAYS                              -->
+  <!-- ============================================== -->
+
+  <!-- Modal 1: Privacy Policy -->
+  <dialog class="app-modal" id="privacy-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="modal_privacy_title">Informativa sulla Privacy</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('privacy-modal')">✕</button>
+      </header>
+      <div class="modal-content">
+        <p data-i18n="modal_privacy_p1">Cie ID tutela la riservatezza e la sicurezza dei dati personali dei cittadini in
+          conformità al Regolamento UE 2016/679 (GDPR).</p>
+        <p data-i18n="modal_privacy_p2">I dati di autenticazione, il certificato digitale e il PIN risiedono
+          esclusivamente nel chip sicuro della Carta d'Identità Elettronica e nell'enclave sicura del dispositivo.</p>
+        <p data-i18n="modal_privacy_p3">Nessun dato biometrico o codice PIN viene trasmesso a server centrali durante
+          l'accesso.</p>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full" onclick="closeModal('privacy-modal')">
+          <span data-i18n="btn_chiudi">Chiudi</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 2: Crediti -->
+  <dialog class="app-modal" id="credits-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="modal_credits_title">Crediti</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('credits-modal')">✕</button>
+      </header>
+      <div class="modal-content text-center">
+        <div class="credits-logo">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#003366" stroke-width="2">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <h4 data-i18n="modal_credits_header">Cie ID Mobile Redesign</h4>
+        <p class="text-sm" data-i18n="modal_credits_subtitle">Prototipo interattivo basato sulle specifiche di design
+          Balsamiq Wireframes.</p>
+        <p class="text-xs text-muted mt-2" data-i18n="modal_credits_org">Ministero dell'Interno & Istituto Poligrafico e
+          Zecca dello Stato (IPZS)</p>
+        <p class="text-xs text-muted" data-i18n="modal_credits_ver">Versione 2.4.0 (Redesign 2026)</p>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full" onclick="closeModal('credits-modal')">
+          <span data-i18n="btn_chiudi">Chiudi</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 3: QR Scanner Camera Simulation -->
+  <dialog class="app-modal" id="qr-modal">
+    <div class="modal-card qr-viewfinder-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="qr_modal_title">Inquadra il QR Code</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('qr-modal')">✕</button>
+      </header>
+      <div class="modal-content qr-scanner-wrapper">
+        <div class="camera-simulation">
+          <div class="viewfinder-frame">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="laser-scanner"></div>
+          </div>
+          <p class="camera-caption" data-i18n="qr_caption">Inquadra il codice QR visualizzato sul portale istituzionale
+          </p>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full" onclick="simulateQrAuthSuccess()">
+          <span data-i18n="btn_simula_scansione">Simula scansione QR riuscita</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 4: Notifiche -->
+  <dialog class="app-modal" id="notifications-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="notif_title">Notifiche e Avvisi</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('notifications-modal')">✕</button>
+      </header>
+      <div class="modal-content notif-list">
+        <div class="notif-item unread">
+          <div class="notif-dot"></div>
+          <div class="notif-body">
+            <strong data-i18n="notif_item1_title">Nuovo accesso completato</strong>
+            <p data-i18n="notif_item1_desc">Accesso effettuato al portale INPS con successo alle ore 09:15.</p>
+            <small data-i18n="notif_item1_time">Oggi, 09:15</small>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-body">
+            <strong data-i18n="notif_item2_title">Certificato CIE valido</strong>
+            <p data-i18n="notif_item2_desc">La tua CIE scadrà regolarmente il 28/05/2032.</p>
+            <small data-i18n="notif_item2_time">Ieri</small>
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-secondary w-full" onclick="closeModal('notifications-modal')">
+          <span data-i18n="btn_chiudi">Chiudi</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 5: Login con Credenziali (Semplificato) -->
+  <dialog class="app-modal" id="semplificato-login-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="semplificato_login_title">Accesso con credenziali CIE</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('semplificato-login-modal')">✕</button>
+      </header>
+      <div class="modal-content">
+        <form onsubmit="handleSemplificatoSubmit(event)">
+          <div class="form-group mb-3">
+            <label class="form-label" for="input-cf" data-i18n="lbl_cf">Codice Fiscale</label>
+            <input type="text" id="input-cf" class="form-input" placeholder="RSSMRA80A01H501U" maxlength="16" required>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label" for="input-pwd" data-i18n="lbl_pwd">Password credenziali</label>
+            <input type="password" id="input-pwd" class="form-input" placeholder="••••••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-full mt-2">
+            <span data-i18n="btn_invia_otp">Richiedi OTP e Accedi</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal 6: Guida PIN -->
+  <dialog class="app-modal" id="guide-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="guide_title">Guida al codice PIN</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('guide-modal')">✕</button>
+      </header>
+      <div class="modal-content">
+        <h4 data-i18n="guide_subtitle">Composizione del PIN:</h4>
+        <p data-i18n="guide_p1">Il codice PIN completo è composto da <strong>8 cifre</strong>:</p>
+        <ul>
+          <li data-i18n="guide_part1">• Prima parte (4 cifre): consegnata di persona presso l'ufficio anagrafe del
+            Comune durante la richiesta della CIE.</li>
+          <li data-i18n="guide_part2">• Seconda parte (4 cifre): contenuta all'interno della busta sigillata recapitata
+            per posta insieme alla tessera.</li>
+        </ul>
+        <p class="mt-2 text-sm text-muted" data-i18n="guide_note">Puoi modificare il PIN in qualsiasi momento dalla
+          sezione Gestione Carta.</p>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full" onclick="closeModal('guide-modal')">
+          <span data-i18n="btn_ho_capito">Ho capito</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 7: Interactive Tutorial Modal for NFC Reading -->
+  <dialog class="app-modal" id="tutorial-modal">
+    <div class="modal-card tutorial-modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="tutorial_modal_title">Tutorial: Lettura Carta CIE</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('tutorial-modal')">✕</button>
+      </header>
+      <div class="modal-content">
+        <div class="tutorial-steps-container">
+          <div class="tutorial-step-card">
+            <div class="tutorial-step-num">1</div>
+            <div class="tutorial-step-body">
+              <h4 data-i18n="tut_step1_title">Individua l'antenna NFC</h4>
+              <p data-i18n="tut_step1_desc">Sulla maggior parte degli smartphone, il sensore NFC si trova nella
+                <strong>parte alta del retro</strong>, accanto alla fotocamera.
+              </p>
+            </div>
+          </div>
+          <div class="tutorial-step-card">
+            <div class="tutorial-step-num">2</div>
+            <div class="tutorial-step-body">
+              <h4 data-i18n="tut_step2_title">Appoggia a contatto diretto</h4>
+              <p data-i18n="tut_step2_desc">Fai aderire la Carta d'Identità Elettronica sul retro del telefono senza
+                sollevare i bordi.</p>
+            </div>
+          </div>
+          <div class="tutorial-step-card">
+            <div class="tutorial-step-num">3</div>
+            <div class="tutorial-step-body">
+              <h4 data-i18n="tut_step3_title">Attendi 4 secondi senza muoverti</h4>
+              <p data-i18n="tut_step3_desc">Una vibrazione e la barra di avanzamento confermeranno la lettura riuscita
+                del certificato.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full"
+          onclick="closeModal('tutorial-modal'); navigateTo('screen-nfc');">
+          <span data-i18n="btn_prova_subito">Prova subito la lettura NFC</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Modal 8: Recupero PUK Modal -->
+  <dialog class="app-modal" id="recovery-puk-modal">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h3 class="modal-title" data-i18n="puk_recovery_modal_title">Recupero Codice PUK</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('recovery-puk-modal')">✕</button>
+      </header>
+      <div class="modal-content">
+        <p data-i18n="puk_recovery_modal_p1">
+          Il codice PUK è fondamentale per sbloccare la tua CIE in caso di inserimento errato del PIN per 3 volte.
+        </p>
+        <div class="help-card-tip my-2">
+          <strong data-i18n="puk_recovery_modal_tip_title">Come recuperarlo:</strong>
+          <p data-i18n="puk_recovery_modal_tip_desc">
+            Se hai fornito un recapito email o PEC durante la richiesta della CIE al Comune, puoi richiedere il rinvio
+            delle ultime 4 cifre del PUK tramite il portale ufficiale del Ministero dell'Interno.
+          </p>
+        </div>
+        <p class="text-sm text-muted" data-i18n="puk_recovery_modal_p2">
+          Le prime 4 cifre restano sempre quelle riportate sulla prima pagina della ricevuta cartacea rilasciata dal
+          Comune.
+        </p>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-primary w-full"
+          onclick="closeModal('recovery-puk-modal'); startUnlockCardFlow();">
+          <span data-i18n="btn_vai_sblocca_puk">Vai allo Sblocco Carta</span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Alert -->
+  <div class="toast-alert" id="toast-alert" role="status" aria-live="polite">
+    <span class="toast-message" id="toast-message">Operazione completata</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
